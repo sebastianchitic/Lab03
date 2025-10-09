@@ -49,14 +49,12 @@ class Autonoleggio:
             raise FileNotFoundError(f"File {file_path} non trovato")
 
     def aggiungi_automobile(self, marca, modello, anno, num_posti):
-        # Controlla se l'auto esiste già
         for auto in self.automobili:
             if (auto.marca == marca and
                     auto.modello == modello and
                     auto.anno_immatricolazione == anno):
                 return None
 
-        # Genera codice univoco
         if self.automobili:
             codici = [auto.codice for auto in self.automobili]
             ultimoCodice = max(int(codice[1:]) for codice in codici)
@@ -64,7 +62,6 @@ class Autonoleggio:
         else:
             nuovo_codice_a = "A1"
 
-        # Crea la nuova auto
         nuova_auto = Automobile(
             codice=nuovo_codice_a,
             marca=marca,
@@ -80,28 +77,24 @@ class Autonoleggio:
         return automobili_ordinate
 
     def nuovo_noleggio(self, data, id_automobile, cognome_cliente):
-        # Cerca l'auto
         auto_trovata = None
         for auto in self.automobili:
             if auto.codice == id_automobile:
                 auto_trovata = auto
                 break
 
-        # Controlli
         if auto_trovata is None:
             raise Exception(f"Auto {id_automobile} non trovata")
 
         if auto_trovata.noleggiata:
             raise Exception(f"Auto {id_automobile} già noleggiata")
 
-        # Genera codice noleggio
         if self.noleggi:
             ultimo_numero = max(int(n.codice[1:]) for n in self.noleggi)
             nuovo_codice_n = f'N{ultimo_numero + 1}'
         else:
             nuovo_codice_n = 'N1'
 
-        # Crea il noleggio
         noleggio = Noleggio(nuovo_codice_n, data, id_automobile, cognome_cliente)
         self.noleggi.append(noleggio)
         auto_trovata.noleggiata = True
@@ -109,7 +102,6 @@ class Autonoleggio:
         return noleggio
 
     def termina_noleggio(self, id_noleggio):
-        # Cerca il noleggio
         noleggio_trovato = None
         for noleggio in self.noleggi:
             if noleggio.codice == id_noleggio:
@@ -119,7 +111,6 @@ class Autonoleggio:
         if noleggio_trovato is None:
             raise Exception(f"Noleggio {id_noleggio} non trovato")
 
-        # Trova l'auto e la rende disponibile
         auto_trovata = None
         for auto in self.automobili:
             if auto.codice == noleggio_trovato.id_automobile:
@@ -129,5 +120,5 @@ class Autonoleggio:
         if auto_trovata:
             auto_trovata.noleggiata = False
 
-        # Rimuove il noleggio
+
         self.noleggi.remove(noleggio_trovato)
